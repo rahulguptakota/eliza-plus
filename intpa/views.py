@@ -31,7 +31,13 @@ def googledefine(request):
     return HttpResponse(json.dumps(m), content_type='application/json')
 
 
-
+def displayimage(request):
+    keyword = request.GET['display']
+    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+display
+    page = urllib2.urlopen(url)
+    soup = BeautifulSoup(page)
+    x = soup.find_all('img')
+    print x["data-src"]
         
 
 

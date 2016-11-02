@@ -45,7 +45,7 @@
             changed code to work around.
 */
 
-window.onload = function(){
+
 function ElizaBot(noRandomFlag) {
 	this.noRandom= (noRandomFlag)? true:false;
 	this.capitalizeFirstLetter=true;
@@ -278,7 +278,8 @@ ElizaBot.prototype.transform = function(text) {
 	text=text.replace(/\s*\bbut\b\s*/g, '.');
 	text=text.replace(/\s{2,}/g, ' ');
 	// split text in part sentences and loop through them
-	var parts=text.split('.');
+	
+	var parts=text.split(' ');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];
 		console.log(part);
@@ -319,15 +320,42 @@ ElizaBot.prototype.transform = function(text) {
 				
 				return 'here\'s what I found!';
 			}
-			else{
-				for (var k=0; k<elizaKeywords.length; k++) {
-					if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
-						rpl = this._execRule(k);
-					}
-					if (rpl!='') return rpl;
+			
+		}
+	}
+	
+	
+	var parts=text.split('.');
+	for (var i=0; i<parts.length; i++){
+		var part=parts[i];
+		console.log(part);
+		if (part!='') {
+			// check for quit expression
+			for (var q=0; q<elizaQuits.length; q++) {
+				if (elizaQuits[q]==part) {
+					this.quit=true;
+					return this.getFinal();
 				}
 			}
-		
+			// preprocess (v.1.1: work around lambda function)
+			var m=this.preExp.exec(part);
+			if (m) {
+				var lp='';
+				var rp=part;
+				while (m) {
+					lp+=rp.substring(0,m.index)+this.pres[m[1]];
+					rp=rp.substring(m.index+m[0].length);
+					m=this.preExp.exec(rp);
+				}
+				part=lp+rp;
+			}
+			this.sentence=part;
+			for (var k=0; k<elizaKeywords.length; k++) {
+				if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
+					rpl = this._execRule(k);
+				}
+				if (rpl!='') return rpl;
+			}
 		}
 	}
 	// nothing matched try mem
@@ -473,7 +501,7 @@ if (typeof Array.prototype.shift == 'undefined') {
 		this.length--;
 		return e0;
 	};
-}
+
 }
 
 // eof

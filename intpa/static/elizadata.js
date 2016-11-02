@@ -70,11 +70,11 @@ var elizaSynons = {
 "sad": ["unhappy", "depressed", "sick"]
 };
 var featureKeywords =[
- ["weather",0],
- ["climate",0],
- ["season",0],
- ["location",1],
- ["place",1]
+ ["weather","getweather"],
+ ["climate","getweather"],
+ ["season","getweather"],
+ ["location","getweather"],
+ ["place","getweather"]
 
 
 

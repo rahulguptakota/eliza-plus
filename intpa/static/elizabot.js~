@@ -45,7 +45,7 @@
             changed code to work around.
 */
 
-
+window.onload = function(){
 function ElizaBot(noRandomFlag) {
 	this.noRandom= (noRandomFlag)? true:false;
 	this.capitalizeFirstLetter=true;
@@ -199,7 +199,75 @@ ElizaBot.prototype._sortKeywords = function(a,b) {
 	else return 0;
 }
 
+ElizaBot.prototype.features = function(part){
+
+	var feat = featureKeywords;
+	for( var i=0;i<feat.length;i++){
+		var n = part.localeCompare(feat[i][0]);
+		if(n==0){
+			return i;
+		}
+	
+	}
+	return -1;
+
+	
+}
+
+ElizaBot.prototype.ajax_req = function(func, str){
+	
+	console.log("here");
+	console.log(str);
+	console.log(func);
+	var user_id =1, level=1, score=0;
+	$.ajax({
+		type: 'POST',
+		url: '/intpa/',//+func +"/",
+		data: 
+		{	
+			//user_id: user_id,
+			//user_level: level,
+			//user_score: score,
+			user_str : str,
+		},
+		beforeSend: function(xhr){
+			console.log("reaching the beforesend");
+			xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
+		},
+		success: function(data)
+		{	
+			console.log("abcd");
+			if(data){
+				console.log("Server Error");
+			}
+		},
+		error: function(xhr, ermsg,err){
+			alert(xhr.status + ": " + xhr.responseText);
+		}
+		
+		/*success: function(data)
+		{
+			source1 = data[0];
+			source2 = data[1];
+			source3 = data[2];
+			source4 = data[3];
+			output = '';
+		    memory_array.memory_tile_shuffle();
+		    for(var i = 0; i < memory_array.length; i++){
+		    	if(memory_array[i] == 'A'){
+					ans = i;
+				}
+		    }
+		    
+		 }*/
+	});
+	
+	
+}
+
+
 ElizaBot.prototype.transform = function(text) {
+	console.log("start");
 	var rpl='';
 	this.quit=false;
 	// unify text string
@@ -213,6 +281,7 @@ ElizaBot.prototype.transform = function(text) {
 	var parts=text.split('.');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];
+		console.log(part);
 		if (part!='') {
 			// check for quit expression
 			for (var q=0; q<elizaQuits.length; q++) {
@@ -235,12 +304,30 @@ ElizaBot.prototype.transform = function(text) {
 			}
 			this.sentence=part;
 			// loop trough keywords
-			for (var k=0; k<elizaKeywords.length; k++) {
-				if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
-					rpl = this._execRule(k);
+			var tmp=this.features(part);
+			if(tmp+1>0){
+				var str='';
+				for(var j=i+1;j<parts.length;j++){
+					str.concat(' ');
+					str.concat(parts[j]);
 				}
-				if (rpl!='') return rpl;
+				console.log(tmp);
+				var func = featureKeywords[tmp][1];
+				console.log(func);
+				console.log(str);
+				return this.ajax_req(func,str);
+				
+				return 'here\'s what I found!';
 			}
+			else{
+				for (var k=0; k<elizaKeywords.length; k++) {
+					if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
+						rpl = this._execRule(k);
+					}
+					if (rpl!='') return rpl;
+				}
+			}
+		
 		}
 	}
 	// nothing matched try mem
@@ -386,6 +473,7 @@ if (typeof Array.prototype.shift == 'undefined') {
 		this.length--;
 		return e0;
 	};
+}
 }
 
 // eof

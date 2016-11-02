@@ -69,7 +69,16 @@ var elizaSynons = {
 "happy": ["elated", "glad", "better"],
 "sad": ["unhappy", "depressed", "sick"]
 };
+var featureKeywords =[
+ ["weather",0],
+ ["climate",0],
+ ["season",0],
+ ["location",1],
+ ["place",1]
 
+
+
+];
 var elizaKeywords = [
 
 /*

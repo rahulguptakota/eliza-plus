@@ -14,7 +14,9 @@ def chatpage(request):
 
 def getweather(request):
     client_address = request.META['HTTP_X_FORWARDED_FOR']
-    gi = pygeoip.GeoIP('GeoIPCity.dat')
+    gi = pygeoip.GeoIP('GeoLiteCity.dat')
+    print client_address
     city = gi.record_by_addr(client_address).city
-    weather_data = requests.get('http://api.openweathermap.org/data/2.5/weather?q='+city+'&APPID=b64701c2ef43f513e326906d0ddd0f9f')
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?q='+city+'&APPID=b64701c2ef43f513e326906d0ddd0f9f')
+    weather_data = r.json()
     return HttpResponse(json.dumps(weather_data), content_type='application/json');

@@ -45,7 +45,7 @@
             changed code to work around.
 */
 
-$(document).ready(function(){  
+
 function ElizaBot(noRandomFlag) {
 	this.noRandom= (noRandomFlag)? true:false;
 	this.capitalizeFirstLetter=true;
@@ -211,26 +211,25 @@ ElizaBot.prototype.features = function(part){
 	}
 	return -1;
 
-
+	
 }
 
 ElizaBot.prototype.ajax_req = function(func, str){
 	
+	console.log("here");
+	console.log(str);
+	console.log(func);
 	var user_id =1, level=1, score=0;
 	$.ajax({
-		type: "POST",
-		url: "/intpa/"+func +"/",
+		type: 'POST',
+		url: '/intpa/',//+func +"/",
 		data: 
 		{	
-			user_id: user_id,
-			user_level: level,
-			user_score: score,
-			user_str = str;
+			//user_id: user_id,
+			//user_level: level,
+			//user_score: score,
+			user_str : str,
 		},
-		// beforesend: function(xhr){
-		// 	// console.log("adfds");
-		// 	xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-		// },
 		beforeSend: function(xhr){
 			console.log("reaching the beforesend");
 			xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
@@ -245,13 +244,30 @@ ElizaBot.prototype.ajax_req = function(func, str){
 		error: function(xhr, ermsg,err){
 			alert(xhr.status + ": " + xhr.responseText);
 		}
+		
+		/*success: function(data)
+		{
+			source1 = data[0];
+			source2 = data[1];
+			source3 = data[2];
+			source4 = data[3];
+			output = '';
+		    memory_array.memory_tile_shuffle();
+		    for(var i = 0; i < memory_array.length; i++){
+		    	if(memory_array[i] == 'A'){
+					ans = i;
+				}
+		    }
+		    
+		 }*/
 	});
-
+	
 	
 }
 
 
 ElizaBot.prototype.transform = function(text) {
+	console.log("start");
 	var rpl='';
 	this.quit=false;
 	// unify text string
@@ -265,8 +281,7 @@ ElizaBot.prototype.transform = function(text) {
 	var parts=text.split('.');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];
-		var part2='';
-		if(i+1<parts.length)part2=parts[i+1];
+		console.log(part);
 		if (part!='') {
 			// check for quit expression
 			for (var q=0; q<elizaQuits.length; q++) {
@@ -294,10 +309,13 @@ ElizaBot.prototype.transform = function(text) {
 				var str='';
 				for(var j=i+1;j<parts.length;j++){
 					str.concat(' ');
-					str.concat(parts[j];
+					str.concat(parts[j]);
 				}
+				console.log(tmp);
 				var func = featureKeywords[tmp][1];
-				this.ajax_req(func,str);
+				console.log(func);
+				console.log(str);
+				return this.ajax_req(func,str);
 				
 				return 'here\'s what I found!';
 			}
@@ -455,6 +473,7 @@ if (typeof Array.prototype.shift == 'undefined') {
 		this.length--;
 		return e0;
 	};
+
 }
-}
+
 // eof

@@ -1,0 +1,8 @@
+user = admin
+pass = cs252project
+
+#while making new models
+dont forget to register that model in admin page
+after creating model , exec
+	python manage.py makemigrations intpa
+/!/	python manage.py migrate

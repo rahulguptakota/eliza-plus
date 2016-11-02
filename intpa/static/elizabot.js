@@ -45,7 +45,7 @@
             changed code to work around.
 */
 
-
+$(document).ready(function(){  
 function ElizaBot(noRandomFlag) {
 	this.noRandom= (noRandomFlag)? true:false;
 	this.capitalizeFirstLetter=true;
@@ -387,5 +387,5 @@ if (typeof Array.prototype.shift == 'undefined') {
 		return e0;
 	};
 }
-
+}
 // eof

@@ -45,7 +45,7 @@
             changed code to work around.
 */
 
-$(document).ready(function(){  
+
 function ElizaBot(noRandomFlag) {
 	this.noRandom= (noRandomFlag)? true:false;
 	this.capitalizeFirstLetter=true;
@@ -199,58 +199,6 @@ ElizaBot.prototype._sortKeywords = function(a,b) {
 	else return 0;
 }
 
-ElizaBot.prototype.features = function(part){
-
-	var feat = featureKeywords;
-	for( var i=0;i<feat.length;i++){
-		var n = part.localeCompare(feat[i][0]);
-		if(n==0){
-			return i;
-		}
-	
-	}
-	return -1;
-
-
-}
-
-ElizaBot.prototype.ajax_req = function(func, str){
-	
-	var user_id =1, level=1, score=0;
-	$.ajax({
-		type: "POST",
-		url: "/intpa/"+func +"/",
-		data: 
-		{	
-			user_id: user_id,
-			user_level: level,
-			user_score: score,
-			user_str = str;
-		},
-		// beforesend: function(xhr){
-		// 	// console.log("adfds");
-		// 	xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-		// },
-		beforeSend: function(xhr){
-			console.log("reaching the beforesend");
-			xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-		},
-		success: function(data)
-		{	
-			console.log("abcd");
-			if(data){
-				console.log("Server Error");
-			}
-		},
-		error: function(xhr, ermsg,err){
-			alert(xhr.status + ": " + xhr.responseText);
-		}
-	});
-
-	
-}
-
-
 ElizaBot.prototype.transform = function(text) {
 	var rpl='';
 	this.quit=false;
@@ -265,8 +213,6 @@ ElizaBot.prototype.transform = function(text) {
 	var parts=text.split('.');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];
-		var part2='';
-		if(i+1<parts.length)part2=parts[i+1];
 		if (part!='') {
 			// check for quit expression
 			for (var q=0; q<elizaQuits.length; q++) {
@@ -289,27 +235,12 @@ ElizaBot.prototype.transform = function(text) {
 			}
 			this.sentence=part;
 			// loop trough keywords
-			var tmp=this.features(part);
-			if(tmp+1>0){
-				var str='';
-				for(var j=i+1;j<parts.length;j++){
-					str.concat(' ');
-					str.concat(parts[j];
+			for (var k=0; k<elizaKeywords.length; k++) {
+				if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
+					rpl = this._execRule(k);
 				}
-				var func = featureKeywords[tmp][1];
-				this.ajax_req(func,str);
-				
-				return 'here\'s what I found!';
+				if (rpl!='') return rpl;
 			}
-			else{
-				for (var k=0; k<elizaKeywords.length; k++) {
-					if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
-						rpl = this._execRule(k);
-					}
-					if (rpl!='') return rpl;
-				}
-			}
-		
 		}
 	}
 	// nothing matched try mem
@@ -456,5 +387,5 @@ if (typeof Array.prototype.shift == 'undefined') {
 		return e0;
 	};
 }
-}
+
 // eof

@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import UserForm
 from django import forms
 from django.views import generic
-
+from django.views.generic import View
+from django.urls import reverse
 
 import pygeoip
 import requests
@@ -30,7 +31,7 @@ def getweather(request):
 	return HttpResponse(json.dumps(weather_data), content_type='application/json');
 
 
-class UserFormView(generic.DetailView):
+class UserFormView(View):
 
 	form_class = UserForm
 	template_name = 'intpa/regForm.html'
@@ -53,3 +54,13 @@ class UserFormView(generic.DetailView):
 			password = form.cleaned_data['password']
 			user.set_password(password)
 			user.save()
+
+		#return user creditionals if they are correct
+			user = authenticate(username=username, password=password)
+			
+			if user is not None:
+				if user.is_active:
+					login(request, user)
+					return redirect('intpa:chatpage')
+			return HttpResponseRedirect(reverse('intpa:chatpage'))
+		return render(request, self.template_name, {'form': form})

@@ -5,6 +5,10 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import urllib2
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse, HttpResponseRedirect
+
+
 # Create your views here.
 def index(request):
     return HttpResponse("hello world")
@@ -38,9 +42,24 @@ def displayimage(request):
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
     dictionary = {0:x[0]["data-src"],1:x[1]["src"],2:x[2]["data-src"],3x[3]["src"]}
-     return HttpResponse(json.dumps(dictionary),content_type='application/json')
+    return HttpResponse(json.dumps(dictionary),content_type='application/json')
         
 
+def send_email(request):
+    subject = request.POST.get('subject', '')
+    message = request.POST.get('message', '')
+    from_email = request.POST.get('from_email', '')
+    to_email = request.POST.get('to_email','')
+    if subject and message and from_email:
+        try:
+            send_mail(subject, message, from_email, to_email)
+        except BadHeaderError:
+            return HttpResponse('Invalid header found.')
+        return HttpResponseRedirect('/contact/thanks/')
+    else:
+        # In reality we'd use a form class
+        # to get proper validation errors.
+        return HttpResponse('Make sure all fields are entered and valid.')
 
 
 

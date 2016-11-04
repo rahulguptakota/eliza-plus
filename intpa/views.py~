@@ -37,7 +37,7 @@ def displayimage(request):
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
-    print x["data-src"]
+    dictionary = {0:x[0]["data-src"],1:x[1]["src"],2:x[2]["data-src"],3x[3]["src"]}
         
 
 

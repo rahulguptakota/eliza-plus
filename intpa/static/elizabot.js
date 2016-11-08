@@ -277,7 +277,10 @@ ElizaBot.prototype.ajax_req = function(func, str){
     				*/
 				res="Look what I found!";
 			}
-			
+			else if(func=="email"){
+				window.open("http://localhost:8000/intpa/email");
+				res="Here you go";
+			}
 		},
 		error: function(xhr, ermsg,err){
 			console.log("error");
@@ -315,7 +318,7 @@ ElizaBot.prototype.transform = function(text) {
 		fl=1;
 	}
 	
-	console.log("fl "+fl);
+	//console.log("fl "+fl);
 	if(fl==0){
 		var tmp=eval(text);
 		return tmp;

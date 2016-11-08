@@ -80,6 +80,10 @@ var featureKeywords =[
 ["pics","photo"],
 ["photo","photo"],
 ["photos","photo"],
+["email","email"],
+["mail","email"],
+
+
 
 ];
 var elizaKeywords = [

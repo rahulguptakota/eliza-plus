@@ -213,16 +213,19 @@ ElizaBot.prototype.features = function(part){
 
 	
 }
-
+//func : feature and str is argument to function
+var res="res"	;
 ElizaBot.prototype.ajax_req = function(func, str){
 	
-	console.log("here");
+	//res="nothing found";
+	console.log("here"+3+"me");
 	console.log(str);
 	console.log(func);
 	var user_id =1, level=1, score=0;
 	$.ajax({
 		type: 'POST',
-		url: '/intpa/',//+func +"/",
+		url: '/intpa/'+func +'/',
+		
 		data: 
 		{	
 			//user_id: user_id,
@@ -231,38 +234,36 @@ ElizaBot.prototype.ajax_req = function(func, str){
 			user_str : str,
 		},
 		beforeSend: function(xhr){
-			console.log("reaching the beforesend");
+			console.log('/intpa/'+func +'/');
+			console.log("reaching beforesend");
 			xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
+			console.log("after beforesend");
 		},
 		success: function(data)
 		{	
-			console.log("abcd");
-			if(data){
-				console.log("Server Error");
+			console.log("received json object" );
+			console.log(data);
+			if(func=="getweather"){
+				res="City: " + data.name+"\n";
+				res+="Temperature: " + (data.main.temp-273)+" Celsius\n";
+				res+="Visibility: " + data.visibility+" metres\n";
+				console.log(res);
+				//console.log("me");
 			}
+			
+			
 		},
 		error: function(xhr, ermsg,err){
+			console.log("error");
 			alert(xhr.status + ": " + xhr.responseText);
-		}
+			console.log("error");
+		},
+		async: false
 		
-		/*success: function(data)
-		{
-			source1 = data[0];
-			source2 = data[1];
-			source3 = data[2];
-			source4 = data[3];
-			output = '';
-		    memory_array.memory_tile_shuffle();
-		    for(var i = 0; i < memory_array.length; i++){
-		    	if(memory_array[i] == 'A'){
-					ans = i;
-				}
-		    }
-		    
-		 }*/
 	});
-	
-	
+	console.log("me_");
+	console.log("end");
+	//return res;
 }
 
 
@@ -316,8 +317,13 @@ ElizaBot.prototype.transform = function(text) {
 				var func = featureKeywords[tmp][1];
 				console.log(func);
 				console.log(str);
-				return this.ajax_req(func,str);
+				///////////////////////////////////////////////////////
+				//var res= ;
 				
+				(this.ajax_req(func,str));
+				
+				
+				return res;
 				return 'here\'s what I found!';
 			}
 			

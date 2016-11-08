@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/1.10/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
+from __future__ import absolute_import
 
+from .celery import app as celery_app
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -28,9 +30,30 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'your_gmail_username'
+EMAIL_HOST_PASSWORD = 'your_gmail_password'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# CELERY STUFF
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+#import djcelery
+#djcelery.setup_loader()
+#BROKER_URL = 'django://'
+
 # Application definition
 
 INSTALLED_APPS = [
+    'djcelery',
     'intpa.apps.IntpaConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -106,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

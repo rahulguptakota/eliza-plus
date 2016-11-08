@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 import urllib2
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
-
+from django.shortcuts import render, redirect
+from intpa.forms import ContactForm
 
 # Create your views here.
 def index(request):
@@ -41,9 +42,8 @@ def displayimage(request):
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
-    dictionary = {0:x[0]["data-src"],1:x[1]["src"],2:x[2]["data-src"],3x[3]["src"]}
+    dictionary = {0:x[0]["data-src"],1:x[1]["src"],2:x[2]["data-src"],3:x[3]["src"]}
     return HttpResponse(json.dumps(dictionary),content_type='application/json')
-        
 
 def send_email(request):
     subject = request.POST.get('subject', '')
@@ -55,11 +55,31 @@ def send_email(request):
             send_mail(subject, message, from_email, to_email)
         except BadHeaderError:
             return HttpResponse('Invalid header found.')
-        return HttpResponseRedirect('/contact/thanks/')
+        #return HttpResponseRedirect('/contact/thanks/')
     else:
         # In reality we'd use a form class
         # to get proper validation errors.
         return HttpResponse('Make sure all fields are entered and valid.')
+
+def email(request):
+    if request.method == 'GET':
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            to_email = form.cleaned_data['to_email']
+            message = form.cleaned_data['message']
+            from_email = form.cleaned_data['from_email']
+            try:
+                send_mail(subject, message, from_email, to_email)
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect('thanks')
+    return render(request, "intpa/email.html", {'form': form})
+
+def thanks(request):
+    return HttpResponse('Thank you for your message.')
 
 
 

@@ -43,11 +43,23 @@ def googledefine(request):
 
 def photo(request):
     keyword = request.POST.get('user_str', False)	
-    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
+    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
     dictionary = {'first':x[0]["data-src"],'second':x[2]["data-src"],'third':x[4]["data-src"],'fourth':x[6]["data-src"]}
+    return HttpResponse(json.dumps(dictionary),content_type='application/json')
+
+def vidoe(request):
+    keyword = request.POST.get('user_str', False)	
+    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
+    page = urllib2.urlopen(url)
+    soup = BeautifulSoup(page)
+    x = soup.find("a",{"class":"ng"})
+    return HttpResponse(json.dumps({"url":x}),content_type='application/json')
+
+
+print x["data-rurl"]
     return HttpResponse(json.dumps(dictionary),content_type='application/json')
 
 def send_email(request):

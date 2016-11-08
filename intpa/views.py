@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from .forms import UserForm
+from django.contrib.auth import authenticate, login, logout
+from .forms import UserForm, LoginForm
 from django import forms
 from django.views import generic
 from django.views.generic import View
@@ -44,9 +44,8 @@ class UserFormView(View):
 #process form data
 	def post(self, request):
 		form = self.form_class(request.POST)
-
+		# return HttpResponse(form.is_valid())
 		if form.is_valid():
-
 			user = form.save(commit=False)
 
 #cleaned (normalized ) data
@@ -54,7 +53,10 @@ class UserFormView(View):
 			password = form.cleaned_data['password']
 			user.set_password(password)
 			user.save()
-
+		
+		# else:
+		# 	username = form.cleaned_data['username']
+		# 	password = form.cleaned_data['password']
 		#return user creditionals if they are correct
 			user = authenticate(username=username, password=password)
 			
@@ -62,5 +64,40 @@ class UserFormView(View):
 				if user.is_active:
 					login(request, user)
 					return redirect('intpa:chatpage')
-			return HttpResponseRedirect(reverse('intpa:chatpage'))
 		return render(request, self.template_name, {'form': form})
+
+
+
+class LoginFormView(View):
+	Loginform_class = LoginForm
+	template_name = 'intpa/regForm.html'
+
+	def get(self, request):
+		form = self.Loginform_class(None)
+		return render(request, self.template_name, {'form': form})
+
+	def post(self, request):
+		form = self.Loginform_class(request.POST)
+		# return HttpResponse(form.is_valid())
+		if 1 :
+#cleaned (normalized ) data
+			password = request.POST.get("password", False)
+			# user_name = request.POST.get("user_name", False)
+			gurkirat = request.POST.get("gurkirat", False)
+					
+		# else:
+		# 	username = form.cleaned_data['username']
+		# 	password = form.cleaned_data['password']
+		#return user creditionals if they are correct
+			# return HttpResponse("gurkirat: {} user_name: {} password: {}".format(gurkirat, "removed",password))
+			user = authenticate(username=gurkirat, password=password)
+			# return HttpResponse(user)
+			if user is not None:
+				if user.is_active:
+					login(request, user)
+					return redirect('intpa:chatpage')
+		return render(request, self.template_name, {'form': form})
+
+def LogOut(request):
+	logout(request)
+	# return redirect('intpa:login')

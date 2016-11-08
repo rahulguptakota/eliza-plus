@@ -52,11 +52,11 @@ def photo(request):
 
 def video(request):
     keyword = request.POST.get('user_str', False)	
-    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
+    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find("a",{"class":"ng"})
-    return HttpResponse(json.dumps({"url":x}),content_type='application/json')
+    return HttpResponse(json.dumps({"url":x["data-rurl"]}),content_type='application/json')
 
 
 print x["data-rurl"]

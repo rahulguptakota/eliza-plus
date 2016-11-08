@@ -82,8 +82,10 @@ var featureKeywords =[
 ["photos","photo"],
 ["email","email"],
 ["mail","email"],
-
-
+["video","video"],
+["videos","video"],
+["movie","video"],
+["clip","video"],
 
 ];
 var elizaKeywords = [

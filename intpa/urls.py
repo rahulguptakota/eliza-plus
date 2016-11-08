@@ -19,4 +19,5 @@ urlpatterns = patterns(
     url(r'^getweather/$', views.getweather, name='getweather'),
     url(r'^googledefine/$', views.googledefine, name='googledefine'),
     url(r'^photo/$', views.photo, name='photo'),
+    url(r'^video/$', views.video, name='video'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -85,3 +85,15 @@ def email(request):
 
 def thanks(request):
     return HttpResponse('Thank you for your message.')
+    
+def video(request):
+    keyword = request.POST.get('user_str', False)	
+    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword
+    page = urllib2.urlopen(url)
+    soup = BeautifulSoup(page)
+    x = soup.find("a",{"class":"ng"})
+    y = {'url':str(x["data-rurl"])}
+    return HttpResponse(json.dumps(y),content_type='application/json')
+
+   
+ 

@@ -69,6 +69,7 @@ ElizaBot.prototype.reset = function() {
 
 ElizaBot.prototype._dataParsed = false;
 
+var vidcnt=0;
 ElizaBot.prototype._init = function() {
 	// install ref to global object
 	var global=ElizaBot.prototype.global=self;
@@ -280,6 +281,21 @@ ElizaBot.prototype.ajax_req = function(func, str){
 			else if(func=="email"){
 				window.open("http://localhost:8000/intpa/email");
 				res="Here you go";
+			}
+			else if(func=="video"){
+				console.log("in video\n"+ data.url);
+				var str= "video";
+				var num= vidcnt%4;
+				vidcnt++;
+				str+=num;
+				console.log(str);
+				//var stri=str.trim();
+				document.getElementById(str).setAttribute("width", 420);
+				document.getElementById(str).setAttribute("height", 315);
+				document.getElementById(str).setAttribute("src", data.url+"&output=embed");
+				
+				res="now enjoy!";
+    				
 			}
 		},
 		error: function(xhr, ermsg,err){

@@ -73,10 +73,13 @@ var featureKeywords =[
  ["weather","getweather"],
  ["climate","getweather"],
  ["season","getweather"],
- ["location","getweather"],
- ["place","getweather"]
-
-
+ ["define","googledefine"],
+ ["meaning","googledefine"],
+ ["show","photo"],
+["pictures","photo"],
+["pics","photo"],
+["photo","photo"],
+["photos","photo"],
 
 ];
 var elizaKeywords = [

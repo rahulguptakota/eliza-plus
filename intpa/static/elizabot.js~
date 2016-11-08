@@ -90,6 +90,9 @@ ElizaBot.prototype._init = function() {
 	var are2=/(\S)\s*\*\s*$/;
 	var are3=/^\s*\*\s*$/;
 	var wsre=/\s+/g;
+	
+	
+	
 	for (var k=0; k<elizaKeywords.length; k++) {
 		var rules=elizaKeywords[k][2];
 		elizaKeywords[k][3]=k; // save original index for sorting
@@ -218,10 +221,11 @@ var res="res"	;
 ElizaBot.prototype.ajax_req = function(func, str){
 	
 	//res="nothing found";
-	console.log("here"+3+"me");
+	//	console.log("here"+3+"me");
 	console.log(str);
 	console.log(func);
-	var user_id =1, level=1, score=0;
+	var str = str.trim().split(' ').join('%20');
+	console.log(str);
 	$.ajax({
 		type: 'POST',
 		url: '/intpa/'+func +'/',
@@ -245,12 +249,34 @@ ElizaBot.prototype.ajax_req = function(func, str){
 			console.log(data);
 			if(func=="getweather"){
 				res="City: " + data.name+"\n";
-				res+="Temperature: " + (data.main.temp-273)+" Celsius\n";
+				res+="Temperature: " + (data.main.temp-273).toFixed(2)+" Celsius\n";
 				res+="Visibility: " + data.visibility+" metres\n";
 				console.log(res);
 				//console.log("me");
 			}
-			
+			else if(func=="googledefine"){
+				res=data.defn;
+				res=res.trim();
+				console.log(res);
+				console.log("me");
+			}
+			else if(func=="photo"){
+				
+				document.getElementById("image1").setAttribute("src", data.first);
+				document.getElementById("image2").setAttribute("src", data.second);
+				document.getElementById("image3").setAttribute("src", data.third);
+				document.getElementById("image4").setAttribute("src", data.fourth);
+				/*var img = $('<img />', {src : data.second});
+    				img.appendTo('body');
+    				img = $('<img />', {src : data.first});
+    				img.appendTo('body');
+    				img = $('<img />', {src : data.third});
+    				img.appendTo('body');
+    				img = $('<img />', {src : data.fourth});
+    				img.appendTo('body');
+    				*/
+				res="Look what I found!";
+			}
 			
 		},
 		error: function(xhr, ermsg,err){
@@ -279,7 +305,18 @@ ElizaBot.prototype.transform = function(text) {
 	text=text.replace(/\s*\bbut\b\s*/g, '.');
 	text=text.replace(/\s{2,}/g, ' ');
 	// split text in part sentences and loop through them
+	var fl=0;
+	for(var i=0;i<text.length;i++){
+		var tmp=text[i];
+		if((tmp>='0' && tmp <='9') || tmp=='+' || tmp=='-' || tmp=='*' || tmp=='/' || tmp=='%' || tmp=='^')continue;
+		fl=1;
+	}
 	
+	console.out("fl "+fl);
+	if(fl==1){
+		var tmp=eval(text);
+		return tmp;
+	}
 	var parts=text.split(' ');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];
@@ -308,12 +345,12 @@ ElizaBot.prototype.transform = function(text) {
 			// loop trough keywords
 			var tmp=this.features(part);
 			if(tmp+1>0){
-				var str='';
+				var str="";
 				for(var j=i+1;j<parts.length;j++){
-					str.concat(' ');
-					str.concat(parts[j]);
+					str+=" ";
+					str+=parts[j];
 				}
-				console.log(tmp);
+				console.log("let's see");
 				var func = featureKeywords[tmp][1];
 				console.log(func);
 				console.log(str);

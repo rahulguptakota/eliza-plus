@@ -20,29 +20,34 @@ def chatpage(request):
     return render(request, 'intpa/chatpage.html', context)
 
 def getweather(request):
-    client_address = request.META['HTTP_X_FORWARDED_FOR']
-    gi = pygeoip.GeoIP('GeoIPCity.dat')
-    city = gi.record_by_addr(client_address).city
-    weather_data = requests.get('http://api.openweathermap.org/data/2.5/weather?q='+city+'&APPID=b64701c2ef43f513e326906d0ddd0f9f')
+    #client_address = request.META['HTTP_X_FORWARDED_FOR']
+    client_address = "103.246.106.9"
+    #gi = pygeoip.GeoIP('GeoLiteCity.dat')
+    #print client_address
+    #city = gi.record_by_addr(client_address)['city']
+#    r = requests.get('http://api.openweathermap.org/data/2.5/weather?q='+str(city)+'&APPID=b64701c2ef43f513e326906d0ddd0f9f')
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?q='+'Kanpur'+'&APPID=b64701c2ef43f513e326906d0ddd0f9f')
+    weather_data = r.json()
     return HttpResponse(json.dumps(weather_data), content_type='application/json');
 
+
 def googledefine(request):
-    keyword = request.GET['define']
-    url = "http://www.dictionary.com/browse/"+ keyword +"?s=ts"
+    keyword = request.POST.get('user_str', False)
+    url = "http://www.dictionary.com/browse/"+ str(keyword)+"?s=ts"
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     tabcontent = soup.find('div', {"class": "def-content"})
-    m = { 1 : tabcontent.text}
+    m = { 'defn' : str(tabcontent.text)}
     return HttpResponse(json.dumps(m), content_type='application/json')
 
 
-def displayimage(request):
-    keyword = request.GET['display']
-    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+display
+def photo(request):
+    keyword = request.POST.get('user_str', False)	
+    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
-    dictionary = {0:x[0]["data-src"],1:x[1]["src"],2:x[2]["data-src"],3:x[3]["src"]}
+    dictionary = {'first':x[0]["data-src"],'second':x[2]["data-src"],'third':x[4]["data-src"],'fourth':x[6]["data-src"]}
     return HttpResponse(json.dumps(dictionary),content_type='application/json')
 
 def send_email(request):
@@ -62,7 +67,7 @@ def send_email(request):
         return HttpResponse('Make sure all fields are entered and valid.')
 
 def email(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         form = ContactForm()
     else:
         form = ContactForm(request.POST)
@@ -72,7 +77,7 @@ def email(request):
             message = form.cleaned_data['message']
             from_email = form.cleaned_data['from_email']
             try:
-                send_mail(subject, message, from_email, to_email)
+                send_mail(subject, message, from_email, [to_email])
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
             return redirect('thanks')
@@ -80,7 +85,3 @@ def email(request):
 
 def thanks(request):
     return HttpResponse('Thank you for your message.')
-
-
-
-    

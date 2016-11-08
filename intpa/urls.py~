@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
-urlpatterns = [
+urlpatterns = patterns(
     '',
     url(r'^email/$',
         views.email,
@@ -18,5 +18,5 @@ urlpatterns = [
     url(r'^email/$', views.email, name='email'),
     url(r'^getweather/$', views.getweather, name='getweather'),
     url(r'^googledefine/$', views.googledefine, name='googledefine'),
-    url(r'^displayimage/$', views.displayimage, name='displayimage'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    url(r'^photo/$', views.photo, name='photo'),
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

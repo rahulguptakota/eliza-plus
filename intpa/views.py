@@ -50,7 +50,7 @@ def photo(request):
     dictionary = {'first':x[0]["data-src"],'second':x[2]["data-src"],'third':x[4]["data-src"],'fourth':x[6]["data-src"]}
     return HttpResponse(json.dumps(dictionary),content_type='application/json')
 
-def vidoe(request):
+def video(request):
     keyword = request.POST.get('user_str', False)	
     url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
     page = urllib2.urlopen(url)

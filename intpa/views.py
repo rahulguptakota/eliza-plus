@@ -70,7 +70,7 @@ class UserFormView(View):
 
 class LoginFormView(View):
 	Loginform_class = LoginForm
-	template_name = 'intpa/regForm.html'
+	template_name = 'intpa/loginForm.html'
 
 	def get(self, request):
 		form = self.Loginform_class(None)
@@ -98,6 +98,6 @@ class LoginFormView(View):
 					return redirect('intpa:chatpage')
 		return render(request, self.template_name, {'form': form})
 
-def LogOut(request):
-	logout(request)
+# def LogOut(request):
+# 	logout(request)
 	# return redirect('intpa:login')

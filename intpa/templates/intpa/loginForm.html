@@ -3,13 +3,7 @@
     <title>Registration Form</title>
    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
    
-   <script>
-   $(document).ready(function(){
-        
-   $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 
-   })
-    </script>
     <style>
     @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
@@ -117,16 +111,14 @@
 <body>
     <div class="login-page">
     <div class="form" >
-        <form class="register-form", action="" method="POST">
-            
-            <input type="text" placeholder="name" name="username"/>
+        <form class="login-form" action="" method="POST" >
+            <input type="text" placeholder="name" name="gurkirat" />
+            <!--<input type="text" placeholder="name" name"user_name"/>-->
             <input type="password" placeholder="password" name="password"/>
-            <input type="text" placeholder="email address" name="email"/>
-            <button>create</button>
-            <p class="message">Already registered? <a href="/intpa/login">Sign In</a></p>
+            <button >login</button>
+            <p class="message">Not registered? <a href="/intpa/registration">Create an account</a></p>
             {% csrf_token %}
         </form>
-        
         
         
     </div>

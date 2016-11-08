@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^login/$', views.LoginFormView.as_view(), name='login'),
     url(r'^chatpage/$', views.chatpage, name='chatpage'),
     url(r'^registration/$', views.UserFormView.as_view(), name='registration'),
-    url(r'^logout/$', views.LogOut, 'logout')
+    # url(r'^logout/$', views.LogOut, 'logout')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

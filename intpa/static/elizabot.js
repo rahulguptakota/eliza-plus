@@ -305,18 +305,21 @@ ElizaBot.prototype.transform = function(text) {
 	text=text.replace(/\s*\bbut\b\s*/g, '.');
 	text=text.replace(/\s{2,}/g, ' ');
 	// split text in part sentences and loop through them
-	/*var fl=0;
-	for(var i=0;i<text.length;i++){
-		var tmp=text[i];
-		if((tmp>='0' && tmp <='9') || tmp=='+' || tmp=='-' || tmp=='*' || tmp=='/' || tmp=='%' || tmp=='^')continue;
+	var fl=0;
+	var text2=text.replace(" ", "");
+	for(var i=0;i<text2.length;i++){
+		var tmp=text2[i];
+		console.log(tmp);
+		if((tmp>='0' && tmp <='9') || tmp=='+' || tmp=='-' || tmp=='*' || tmp=='/' || tmp=='%' || tmp=='^' || tmp==' ')continue;
+		console.log("here " +tmp);
 		fl=1;
 	}
 	
-	console.out("fl "+fl);
-	if(fl==1){
+	console.log("fl "+fl);
+	if(fl==0){
 		var tmp=eval(text);
 		return tmp;
-	}*/
+	}
 	var parts=text.split(' ');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];

@@ -292,7 +292,7 @@ ElizaBot.prototype.ajax_req = function(func, str){
 				//var stri=str.trim();
 				document.getElementById(str).setAttribute("width", 420);
 				document.getElementById(str).setAttribute("height", 315);
-				document.getElementById(str).setAttribute("src", data.url+"&output=embed");
+				document.getElementById(str).setAttribute("src", data.url);
 				
 				res="now enjoy!";
     				

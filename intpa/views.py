@@ -33,11 +33,11 @@ def getweather(request):
 
 def googledefine(request):
     keyword = request.POST.get('user_str', False)
-    url = "http://www.dictionary.com/browse/"+ str(keyword)+"?s=ts"
+    url = "https://en.wikipedia.org/wiki/"+ str(keyword)
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
-    tabcontent = soup.find('div', {"class": "def-content"})
-    m = { 'defn' : str(tabcontent.text)}
+    tabcontent = soup.find('div', {"id": "mw-content-text"})
+    m = { 'p' : str(tabcontent.text)}
     return HttpResponse(json.dumps(m), content_type='application/json')
 
 
@@ -88,11 +88,14 @@ def thanks(request):
     
 def video(request):
     keyword = request.POST.get('user_str', False)	
-    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword
+    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword+"&vsite=youtube"
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find("a",{"class":"ng"})
-    y = {'url':str(x["data-rurl"])}
+    desr = str(x["data-rurl"])
+    desr = desr.replace("watch?v=","embed/")
+    
+    y = {'url': desr}
     return HttpResponse(json.dumps(y),content_type='application/json')
 
    

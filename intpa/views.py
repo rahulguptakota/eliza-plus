@@ -22,6 +22,35 @@ def chatpage(request):
 	context = {}
 	return render(request, 'intpa/chatpage.html', context)
 
+def news(request):
+	keyword = request.POST.get('user_str', False)
+	a = gnp.get_google_news(gnp.EDITION_ENGLISH_INDIA)
+	if(keyword == False):
+		keyword="Top Stories"
+	topics = [
+        "Top Stories", 
+        "Kanpur, Uttar Pradesh", 
+        "India", 
+        "World", 
+        "Business", 
+        "Technology", 
+        "Entertainment", 
+        "Sports", 
+        "Science", 
+        "Health", 
+        "More Top Stories"
+    ]
+	i=0
+	for str in topics:
+		if(str==keyword):
+			break
+		i = i + 1
+	
+	data = []
+	for j in range(20):
+		data.append(a["stories"][j+20*i])
+	return HttpResponse(json.dumps({"news":data}), content_type='application/json')
+
 def getweather(request):
 	client_address = request.META['HTTP_X_FORWARDED_FOR']
 	gi = pygeoip.GeoIP('GeoIPCity.dat')

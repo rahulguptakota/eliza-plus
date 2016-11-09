@@ -1,23 +1,29 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from .forms import UserForm, LoginForm
+from django import forms
+from django.views import generic
+from django.views.generic import View
+from django.urls import reverse
+
 import pygeoip
 import requests
 import json
 from bs4 import BeautifulSoup
 import urllib2
 from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
 from intpa.forms import ContactForm
 
 # Create your views here.
 def index(request):
-    return HttpResponse("hello world")
+	return HttpResponse("hello world")
 
 def chatpage(request):
 #    template = loader.get_template('intpa/chatpage.html')
-    context = {}
-    return render(request, 'intpa/chatpage.html', context)
+	context = {}
+	return render(request, 'intpa/chatpage.html', context)
 
 def getweather(request):
     #client_address = request.META['HTTP_X_FORWARDED_FOR']
@@ -97,3 +103,74 @@ def email(request):
 
 def thanks(request):
     return HttpResponse('Thank you for your message.')
+
+class UserFormView(View):
+
+	form_class = UserForm
+	template_name = 'intpa/regForm.html'
+
+#display blank form
+	def get(self, request):
+		form = self.form_class(None)
+		return render(request, self.template_name, {'form': form})
+
+#process form data
+	def post(self, request):
+		form = self.form_class(request.POST)
+		# return HttpResponse(form.is_valid())
+		if form.is_valid():
+			user = form.save(commit=False)
+
+#cleaned (normalized ) data
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+			user.set_password(password)
+			user.save()
+		
+		# else:
+		# 	username = form.cleaned_data['username']
+		# 	password = form.cleaned_data['password']
+		#return user creditionals if they are correct
+			user = authenticate(username=username, password=password)
+			
+			if user is not None:
+				if user.is_active:
+					login(request, user)
+					return redirect('intpa:chatpage')
+		return render(request, self.template_name, {'form': form})
+
+
+
+class LoginFormView(View):
+	Loginform_class = LoginForm
+	template_name = 'intpa/loginForm.html'
+
+	def get(self, request):
+		form = self.Loginform_class(None)
+		return render(request, self.template_name, {'form': form})
+
+	def post(self, request):
+		form = self.Loginform_class(request.POST)
+		# return HttpResponse(form.is_valid())
+		if 1 :
+#cleaned (normalized ) data
+			password = request.POST.get("password", False)
+			# user_name = request.POST.get("user_name", False)
+			gurkirat = request.POST.get("gurkirat", False)
+					
+		# else:
+		# 	username = form.cleaned_data['username']
+		# 	password = form.cleaned_data['password']
+		#return user creditionals if they are correct
+			# return HttpResponse("gurkirat: {} user_name: {} password: {}".format(gurkirat, "removed",password))
+			user = authenticate(username=gurkirat, password=password)
+			# return HttpResponse(user)
+			if user is not None:
+				if user.is_active:
+					login(request, user)
+					return redirect('intpa:chatpage')
+		return render(request, self.template_name, {'form': form})
+
+# def LogOut(request):
+# 	logout(request)
+	# return redirect('intpa:login')

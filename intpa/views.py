@@ -6,8 +6,12 @@ from .forms import UserForm, LoginForm
 from django import forms
 from django.views import generic
 from django.views.generic import View
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from intpa.forms import ContactForm
 import pygeoip
 import requests
 import json
@@ -37,15 +41,23 @@ def getweather(request):
     return HttpResponse(json.dumps(weather_data), content_type='application/json');
 
 
-def googledefine(request):
+def googledefine2(request):
     keyword = request.POST.get('user_str', False)
-    url = "http://www.dictionary.com/browse/"+ str(keyword)+"?s=ts"
+    url = "https://en.wikipedia.org/wiki/"+ str(keyword)
+    page = urllib2.urlopen(url)
+    soup = BeautifulSoup(page)
+    tabcontent = soup.find_all('div', {"id": "mw-content-text"})
+    m = { 'p' : str(tabcontent.text)}
+    return HttpResponse(json.dumps(m), content_type='application/json')
+
+def googledefine(request):
+    keyword = request.GET['define']
+    url = "http://www.dictionary.com/browse/"+ keyword +"?s=ts"
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     tabcontent = soup.find('div', {"class": "def-content"})
-    m = { 'defn' : str(tabcontent.text)}
+    m = { 1 : tabcontent.text}
     return HttpResponse(json.dumps(m), content_type='application/json')
-
 
 def photo(request):
     keyword = request.POST.get('user_str', False)	
@@ -64,10 +76,6 @@ def video(request):
     x = soup.find("a",{"class":"ng"})
     return HttpResponse(json.dumps({"url":x["data-rurl"]}),content_type='application/json')
 
-
-print x["data-rurl"]
-    return HttpResponse(json.dumps(dictionary),content_type='application/json')
-
 def send_email(request):
     subject = request.POST.get('subject', '')
     message = request.POST.get('message', '')
@@ -85,24 +93,23 @@ def send_email(request):
         return HttpResponse('Make sure all fields are entered and valid.')
 
 def email(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         form = ContactForm()
     else:
         form = ContactForm(request.POST)
         if form.is_valid():
             subject = form.cleaned_data['subject']
-            to_email = form.cleaned_data['to_email']
             message = form.cleaned_data['message']
-            from_email = form.cleaned_data['from_email']
+            to_email = form.cleaned_data['to_email']
             try:
-                send_mail(subject, message, from_email, [to_email])
+                send_mail(subject, message, "", [to_email])
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
-            return redirect('thanks')
+            return HttpResponse('Email has been sent.')
     return render(request, "intpa/email.html", {'form': form})
 
 def thanks(request):
-    return HttpResponse('Thank you for your message.')
+    return HttpResponse('Email has been sent.')
 
 class UserFormView(View):
 

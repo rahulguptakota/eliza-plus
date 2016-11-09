@@ -30,8 +30,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'singhhunny08@gmail.com'
 EMAIL_HOST_PASSWORD = 'hunnySingh@001'
@@ -63,7 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

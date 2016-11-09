@@ -6,6 +6,10 @@ from . import views
 app_name = 'intpa'
 urlpatterns = patterns(
     '',
+    url(r'^email/$',
+        views.email,
+        name='email'
+        ),
     url(r'^thanks/$',
         views.thanks,
         name='thanks'
@@ -16,6 +20,7 @@ urlpatterns = patterns(
     url(r'^email/$', views.email, name='email'),
     url(r'^getweather/$', views.getweather, name='getweather'),
     url(r'^googledefine/$', views.googledefine, name='googledefine'),
+    url(r'^googledefine2/$', views.googledefine2, name='googledefine2'),
     url(r'^photo/$', views.photo, name='photo'),
     url(r'^video/$', views.video, name='video'),
     url(r'^registration/$', views.UserFormView.as_view(), name='registration'),

@@ -30,11 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-
-
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'gmail email id'
-EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST_USER = 'eliza.anonmail@gmail.com'
+EMAIL_HOST_PASSWORD = 'cs252project'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -63,7 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

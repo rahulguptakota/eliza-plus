@@ -56,7 +56,7 @@ def video(request):
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find("a",{"class":"ng"})
-    return HttpResponse(json.dumps({"url":x["data-rurl"]}),content_type='application/json')
+    return HttpResponse(json.dumps({"url":x}),content_type='application/json')
 
 
 print x["data-rurl"]

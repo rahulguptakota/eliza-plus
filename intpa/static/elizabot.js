@@ -199,7 +199,83 @@ ElizaBot.prototype._sortKeywords = function(a,b) {
 	else return 0;
 }
 
+ElizaBot.prototype.features = function(part){
+
+	var feat = featureKeywords;
+	for( var i=0;i<feat.length;i++){
+		var n = part.localeCompare(feat[i][0]);
+		if(n==0){
+			return i;
+		}
+	
+	}
+	return -1;
+
+	
+}
+//func : feature and str is argument to function
+var res="res"	;
+ElizaBot.prototype.ajax_req = function(func, str){
+	
+	//res="nothing found";
+	//	console.log("here"+3+"me");
+	console.log(str);
+	console.log(func);
+	var user_id =1, level=1, score=0;
+	$.ajax({
+		type: 'POST',
+		url: '/intpa/'+func +'/',
+		
+		data: 
+		{	
+			//user_id: user_id,
+			//user_level: level,
+			//user_score: score,
+			user_str : str,
+		},
+		beforeSend: function(xhr){
+			console.log('/intpa/'+func +'/');
+			console.log("reaching beforesend");
+			xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
+			console.log("after beforesend");
+		},
+		success: function(data)
+		{	
+			console.log("received json object" );
+			console.log(data);
+			if(func=="getweather"){
+				res="City: " + data.name+"\n";
+				res+="Temperature: " + (data.main.temp-273).toFixed(2)+" Celsius\n";
+				res+="Visibility: " + data.visibility+" metres\n";
+				console.log(res);
+				//console.log("me");
+			}
+			else if(func=="googledefine"){
+				/*res="City: " + data.name+"\n";
+				res+="Temperature: " + (data.main.temp-273).toFixed(2)+" Celsius\n";
+				res+="Visibility: " + data.visibility+" metres\n";
+				console.log(res);*/
+				//console.log("me");
+			}
+			
+			
+		},
+		error: function(xhr, ermsg,err){
+			console.log("error");
+			alert(xhr.status + ": " + xhr.responseText);
+			console.log("error");
+		},
+		async: false
+		
+	});
+	console.log("me_");
+	console.log("end");
+	//return res;
+}
+
+
 ElizaBot.prototype.transform = function(text) {
+	console.log("start");
 	var rpl='';
 	this.quit=false;
 	// unify text string
@@ -210,9 +286,11 @@ ElizaBot.prototype.transform = function(text) {
 	text=text.replace(/\s*\bbut\b\s*/g, '.');
 	text=text.replace(/\s{2,}/g, ' ');
 	// split text in part sentences and loop through them
-	var parts=text.split('.');
+	
+	var parts=text.split(' ');
 	for (var i=0; i<parts.length; i++) {
 		var part=parts[i];
+		console.log(part);
 		if (part!='') {
 			// check for quit expression
 			for (var q=0; q<elizaQuits.length; q++) {
@@ -235,6 +313,56 @@ ElizaBot.prototype.transform = function(text) {
 			}
 			this.sentence=part;
 			// loop trough keywords
+			var tmp=this.features(part);
+			if(tmp+1>0){
+				var str='';
+				for(var j=i+1;j<parts.length;j++){
+					str.concat(' ');
+					str.concat(parts[j]);
+				}
+				console.log(tmp);
+				var func = featureKeywords[tmp][1];
+				console.log(func);
+				console.log(str);
+				///////////////////////////////////////////////////////
+				//var res= ;
+				
+				(this.ajax_req(func,str));
+				
+				
+				return res;
+				return 'here\'s what I found!';
+			}
+			
+		}
+	}
+	
+	
+	var parts=text.split('.');
+	for (var i=0; i<parts.length; i++){
+		var part=parts[i];
+		console.log(part);
+		if (part!='') {
+			// check for quit expression
+			for (var q=0; q<elizaQuits.length; q++) {
+				if (elizaQuits[q]==part) {
+					this.quit=true;
+					return this.getFinal();
+				}
+			}
+			// preprocess (v.1.1: work around lambda function)
+			var m=this.preExp.exec(part);
+			if (m) {
+				var lp='';
+				var rp=part;
+				while (m) {
+					lp+=rp.substring(0,m.index)+this.pres[m[1]];
+					rp=rp.substring(m.index+m[0].length);
+					m=this.preExp.exec(rp);
+				}
+				part=lp+rp;
+			}
+			this.sentence=part;
 			for (var k=0; k<elizaKeywords.length; k++) {
 				if (part.search(new RegExp('\\b'+elizaKeywords[k][0]+'\\b', 'i'))>=0) {
 					rpl = this._execRule(k);
@@ -386,6 +514,7 @@ if (typeof Array.prototype.shift == 'undefined') {
 		this.length--;
 		return e0;
 	};
+
 }
 
 // eof

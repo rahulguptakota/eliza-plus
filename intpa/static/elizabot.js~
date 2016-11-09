@@ -300,7 +300,7 @@ ElizaBot.prototype.ajax_req = function(func, str){
 			else if(func=="news"){
 				
 				res="Read it out loud!\n\n";
-				for(var j=0;j<3;j++){
+				for(var j=0;j<5;j++){
 					res+=data.news[j].title;
 					res+="\n";
 					res+=data.news[j].content_snippet;

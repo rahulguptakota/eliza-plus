@@ -14,6 +14,7 @@ urlpatterns = patterns(
         views.thanks,
         name='thanks'
         ),
+    url(r'^news/$', views.news, name='news'),
     url(r'^$', views.index, name='index'),
     url(r'^login/$', views.LoginFormView.as_view(), name='login'),
     url(r'^chatpage/$', views.chatpage, name='chatpage'),

@@ -7,7 +7,7 @@ from django import forms
 from django.views import generic
 from django.views.generic import View
 from django.core.urlresolvers import reverse
-
+import gnp
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -50,6 +50,38 @@ def googledefine2(request):
     m = { 'p' : str(tabcontent.text)}
     return HttpResponse(json.dumps(m), content_type='application/json')
 
+def news(request):
+	keyword = request.POST.get('user_str', False)
+	a = gnp.get_google_news(gnp.EDITION_ENGLISH_INDIA)
+	if(keyword == False or keyword==""):
+		keyword="Top Stories"
+	topics = [
+        "Top Stories", 
+        "Kanpur", 
+        "India", 
+        "World", 
+        "Business", 
+        "Technology", 
+        "Entertainment", 
+        "Sports", 
+        "Science", 
+        "Health", 
+        "More Top Stories"
+    ]
+	i=0
+	for str in topics:
+		if(str.lower()==keyword.lower()):
+			break
+		i = i + 1
+	i=i-1
+	if(i<0):
+		i=0
+	
+	data = []
+	for j in range(5):
+		data.append(a["stories"][j+20*i])
+	return HttpResponse(json.dumps({"news":data}), content_type='application/json')
+
 def googledefine(request):
     keyword = request.GET['define']
     url = "http://www.dictionary.com/browse/"+ keyword +"?s=ts"
@@ -61,7 +93,7 @@ def googledefine(request):
 
 def photo(request):
     keyword = request.POST.get('user_str', False)	
-    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword
+    url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
@@ -70,12 +102,15 @@ def photo(request):
 
 def video(request):
     keyword = request.POST.get('user_str', False)	
-    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword
+    url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword+"&vsite=youtube"
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find("a",{"class":"ng"})
-    return HttpResponse(json.dumps({"url":x["data-rurl"]}),content_type='application/json')
-
+    desr = str(x["data-rurl"])
+    desr = desr.replace("watch?v=","embed/")
+    
+    y = {'url': desr}
+    return HttpResponse(json.dumps(y),content_type='application/json')
 def send_email(request):
     subject = request.POST.get('subject', '')
     message = request.POST.get('message', '')

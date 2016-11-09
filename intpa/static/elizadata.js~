@@ -79,7 +79,6 @@ var featureKeywords =[
 ["pictures","photo"],
 ["images","photo"],
 ["pics","photo"],
-["image","photo"],
 ["photo","photo"],
 ["photos","photo"],
 ["email","email"],

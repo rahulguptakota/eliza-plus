@@ -41,7 +41,7 @@ def getweather(request):
     return HttpResponse(json.dumps(weather_data), content_type='application/json');
 
 
-def googledefine(request):
+def googledefine2(request):
     keyword = request.POST.get('user_str', False)
     url = "https://en.wikipedia.org/wiki/"+ str(keyword)
     page = urllib2.urlopen(url)
@@ -50,6 +50,14 @@ def googledefine(request):
     m = { 'p' : str(tabcontent.text)}
     return HttpResponse(json.dumps(m), content_type='application/json')
 
+def googledefine(request):
+    keyword = request.GET['define']
+    url = "http://www.dictionary.com/browse/"+ keyword +"?s=ts"
+    page = urllib2.urlopen(url)
+    soup = BeautifulSoup(page)
+    tabcontent = soup.find('div', {"class": "def-content"})
+    m = { 1 : tabcontent.text}
+    return HttpResponse(json.dumps(m), content_type='application/json')
 
 def photo(request):
     keyword = request.POST.get('user_str', False)	

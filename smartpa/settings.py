@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 from __future__ import absolute_import
 
-from .celery import app as celery_app
+#from .celery import app as celery_app
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -51,7 +51,6 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 # Application definition
 
 INSTALLED_APPS = [
-    'djcelery',
     'intpa.apps.IntpaConfig',
     'django.contrib.admin',
     'django.contrib.auth',

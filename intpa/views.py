@@ -6,8 +6,8 @@ from .forms import UserForm, LoginForm
 from django import forms
 from django.views import generic
 from django.views.generic import View
-from django.core.urlresolvers import reverse
-import gnp
+from django.urls import reverse
+# import gnp
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -16,7 +16,7 @@ import pygeoip
 import requests
 import json
 from bs4 import BeautifulSoup
-import urllib2
+import urllib.request as urllib
 from django.core.mail import send_mail, BadHeaderError
 from intpa.forms import ContactForm
 
@@ -44,48 +44,49 @@ def getweather(request):
 def googledefine2(request):
     keyword = request.POST.get('user_str', False)
     url = "https://en.wikipedia.org/wiki/"+ str(keyword)
-    page = urllib2.urlopen(url)
+    page = urllib.urlopen(url)
     soup = BeautifulSoup(page)
     tabcontent = soup.find_all('div', {"id": "mw-content-text"})
     m = { 'p' : str(tabcontent.text)}
     return HttpResponse(json.dumps(m), content_type='application/json')
 
-def news(request):
-	keyword = request.POST.get('user_str', False)
-	a = gnp.get_google_news(gnp.EDITION_ENGLISH_INDIA)
-	if(keyword == False or keyword==""):
-		keyword="Top Stories"
-	topics = [
-        "Top Stories", 
-        "Kanpur", 
-        "India", 
-        "World", 
-        "Business", 
-        "Technology", 
-        "Entertainment", 
-        "Sports", 
-        "Science", 
-        "Health", 
-        "More Top Stories"
-    ]
-	i=0
-	for str in topics:
-		if(str.lower()==keyword.lower()):
-			break
-		i = i + 1
-	i=i-1
-	if(i<0):
-		i=0
+# def news(request):
+# 	keyword = request.POST.get('user_str', False)
+# 	a = gnp.get_google_news(gnp.EDITION_ENGLISH_INDIA)
+# 	if(keyword == False or keyword==""):
+# 		keyword="Top Stories"
+# 	topics = [
+#         "Top Stories", 
+#         "Kanpur", 
+#         "India", 
+#         "World", 
+#         "Business", 
+#         "Technology", 
+#         "Entertainment", 
+#         "Sports", 
+#         "Science", 
+#         "Health", 
+#         "More Top Stories"
+#     ]
+# 	i=0
+# 	for str in topics:
+# 		if(str.lower()==keyword.lower()):
+# 			break
+# 		i = i + 1
+# 	i=i-1
+# 	if(i<0):
+# 		i=0
 	
-	data = []
-	for j in range(5):
-		data.append(a["stories"][j+20*i])
-	return HttpResponse(json.dumps({"news":data}), content_type='application/json')
+# 	data = []
+# 	for j in range(5):
+# 		data.append(a["stories"][j+20*i])
+# 	return HttpResponse(json.dumps({"news":data}), content_type='application/json')
 
 def googledefine(request):
-    keyword = request.GET['define']
+    print(request.POST.dict())
+    keyword = request.POST.get('user_str', False)
     url = "http://www.dictionary.com/browse/"+ keyword +"?s=ts"
-    page = urllib2.urlopen(url)
+    page = urllib.urlopen(url)
     soup = BeautifulSoup(page)
     tabcontent = soup.find('div', {"class": "def-content"})
     m = { 1 : tabcontent.text}
@@ -94,7 +95,7 @@ def googledefine(request):
 def photo(request):
     keyword = request.POST.get('user_str', False)	
     url = "https://in.images.search.yahoo.com/search/images;?pvid=sb-top-in.images.search.yahoo.com&p="+keyword
-    page = urllib2.urlopen(url)
+    page = urllib.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find_all('img')
     dictionary = {'first':x[0]["data-src"],'second':x[2]["data-src"],'third':x[4]["data-src"],'fourth':x[6]["data-src"]}
@@ -103,7 +104,7 @@ def photo(request):
 def video(request):
     keyword = request.POST.get('user_str', False)	
     url = "https://in.video.search.yahoo.com/search/video?pvid=sb-top-in.video.search.yahoo.com&p="+keyword+"&vsite=youtube"
-    page = urllib2.urlopen(url)
+    page = urllib.urlopen(url)
     soup = BeautifulSoup(page)
     x = soup.find("a",{"class":"ng"})
     desr = str(x["data-rurl"])
